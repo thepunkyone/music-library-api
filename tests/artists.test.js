@@ -9,7 +9,8 @@ describe('/artists', () => {
   });
 
   describe('POST /artists', () => {
-    xit('creates a new artist in the database', (done) => {
+    it('creates a new artist in the database', (done) => {
+      console.log(server);
       chai.request(server)
         .post('/artists')
         .send({
