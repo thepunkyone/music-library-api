@@ -43,7 +43,7 @@ exports.remove = (req, res) => {
     if (artist === undefined) {
       res.status(404).json({ error: 'The artist could not be found.' });
     } else {
-      res.status(204);
+      res.sendStatus(204);
     }
   });
 };
