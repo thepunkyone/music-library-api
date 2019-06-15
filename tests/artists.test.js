@@ -1,3 +1,4 @@
+const assert = require('chai').assert;
 const mongoose = require('mongoose');
 const Artist = require('../src/models/artist');
 
@@ -15,6 +16,8 @@ describe('/artists', () => {
         .send({
           name: 'Tame Impala',
           genre: 'Rock',
+          members: 1,
+          yearFormed: 2007,
         })
         .end((error, res) => {
           expect(error).to.equal(null);
@@ -34,9 +37,9 @@ describe('/artists', () => {
     let artists;
     beforeEach((done) => {
       Promise.all([
-        Artist.create({ name: 'Tame Impala', genre: 'Rock' }),
-        Artist.create({ name: 'Kylie Minogue', genre: 'Pop' }),
-        Artist.create({ name: 'Dave Brubeck', genre: 'Jazz' }),
+        Artist.create({ name: 'Tame Impala', genre: 'Rock', members: 1, yearFormed: 2007 }),
+        Artist.create({ name: 'Kylie Minogue', genre: 'Pop', members: 1, yearFormed: 1987 }),
+        Artist.create({ name: 'Dave Brubeck', genre: 'Jazz', members: 1, yearFormed: 1949 }),
       ]).then((documents) => {
         artists = documents;
         done();
@@ -159,6 +162,22 @@ describe('/artists', () => {
             expect(res.body.error).to.equal('The artist could not be found.');
             done();
           });
+      });
+    });
+
+    describe('GET /artists/formedAfter/:year/genre/:genre', () => {
+      it('finds artist records by year formed after and genre', (done) => {
+        const artist = artists[0];
+        chai.request(server)
+          .get('/artists/formedAfter/1980/genre/Rock')
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(202);
+            expect(res.body.name).to.equal(artist.name);
+            expect(res.body.genre).to.equal(artist.genre);
+            assert.isAtLeast(res.body.yearFormed, 1980);
+          });
+
       });
     });
   });

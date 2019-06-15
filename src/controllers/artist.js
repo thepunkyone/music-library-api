@@ -30,12 +30,12 @@ exports.find = (req, res) => {
 };
 
 exports.findByYearAndGenre = (req, res) => {
-  const { year, genres } = req.params;
+  const { year, genre } = req.params;
   const { sort, limit } = req.query;
 
   Artist.find()
     .where('yearFormed').gt(year)
-    .where('genre').in(JSON.parse(genres))
+    .where('genre').in(genre)
     .sort({ yearFormed: sort })
     .limit(Number(limit))
     .exec((err, artists) => res.status(202).json(artists));

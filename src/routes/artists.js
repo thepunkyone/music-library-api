@@ -6,7 +6,7 @@ const { create, list, find, update, remove, findByYearAndGenre } = require('../c
 artistRouter.post('/', create);
 artistRouter.get('/', list);
 artistRouter.get('/:artistId', find);
-artistRouter.get('/formedAfter/:year/genres/:genres', findByYearAndGenre);
+artistRouter.get('/formedAfter/:year/genre/:genre', findByYearAndGenre);
 artistRouter.patch('/:artistId', update);
 artistRouter.delete('/:artistId', remove);
 
