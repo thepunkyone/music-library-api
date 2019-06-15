@@ -44,7 +44,7 @@ describe('/albums', () => {
         });
     });
 
-    xit('returns a 404 and does not create an album if the artist does not exist', (done) => {
+    it('returns a 404 and does not create an album if the artist does not exist', (done) => {
       chai.request(server)
         .post('/artists/1234/albums')
         .send({
