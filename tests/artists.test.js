@@ -169,15 +169,15 @@ describe('/artists', () => {
       it('finds artist records by year formed after and genre', (done) => {
         const artist = artists[0];
         chai.request(server)
-          .get('/artists/formedAfter/1980/genre/Rock')
+          .get('/artists/formedAfter/2000/genre/Rock')
           .end((err, res) => {
             expect(err).to.equal(null);
             expect(res.status).to.equal(202);
-            expect(res.body.name).to.equal(artist.name);
-            expect(res.body.genre).to.equal(artist.genre);
-            assert.isAtLeast(res.body.yearFormed, 1980);
+            expect(res.body[0].name).to.equal(artist.name);
+            expect(res.body[0].genre).to.equal(artist.genre);
+            assert.isAtLeast(res.body[0].yearFormed, 2000);
+            done();
           });
-
       });
     });
   });
