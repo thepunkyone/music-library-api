@@ -23,7 +23,27 @@ exports.create = (req, res) => {
 };
 
 exports.list = (req, res) => {
-  Album.find().then((albums) => {
-    res.status(200).json(albums);
+  const { artistId } = req.params;
+
+  Artist.findById(artistId, (err, artist) => {
+    if (artist) {
+      Album.find({ artist: artistId }).then((albums) => {
+        res.status(200).json(albums);
+      });
+    } else {
+      res.status(404).send({ error: 'The artist could not be found.' });
+    }
+  });
+};
+
+exports.find = (req, res) => {
+  const { albumId } = req.params;
+
+  Album.findById(albumId, (err, album) => {
+    if (album) {
+      res.status(200).json(album);
+    } else {
+      res.status(404).send({ error: 'The album could not be found.' });
+    }
   });
 };

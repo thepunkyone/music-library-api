@@ -96,6 +96,43 @@ describe('/albums', () => {
             done();
           });
       });
+
+      it('returns a 404 if artist doesn\'t exist', (done) => {
+        chai.request(server)
+          .get('/artists/1234/albums')
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(404);
+            expect(res.body.error).to.equal('The artist could not be found.');
+            done();
+          });
+      });
+    });
+
+    describe('GET /artists/:artistId/albums/:albumId', () => {
+      it('gets album record by id', (done) => {
+        const album = albums[0];
+        chai.request(server)
+          .get(`/artists/${artist._id}/albums/${album._id}`)
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(200);
+            expect(res.body.name).to.equal(album.name);
+            expect(res.body.year).to.equal(album.year);
+            done();
+          });
+      });
+
+      it('returns a 404 if album doesn\'t exist', (done) => {
+        chai.request(server)
+          .get(`/artists/${artist._id}/albums/1234`)
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(404);
+            expect(res.body.error).to.equal('The album could not be found.');
+            done();
+          });
+      });
     });
   });
 });
