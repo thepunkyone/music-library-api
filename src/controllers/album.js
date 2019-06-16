@@ -47,3 +47,16 @@ exports.find = (req, res) => {
     }
   });
 };
+
+exports.update = (req, res) => {
+  const { albumId } = req.params;
+
+  Album.findById(albumId, (err, album) => {
+    if (album) {
+      album.set(req.body).save();
+      res.status(200).json(album);
+    } else {
+      res.status(404).send({ error: 'The album could not be found.' });
+    }
+  });
+};
