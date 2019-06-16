@@ -7,7 +7,7 @@ describe('/albums', () => {
 
   beforeEach((done) => {
     Artist.create({
-      name: 'Tame Impala',
+      name: 'The Jesus and Mary Chain',
       genre: 'Rock',
     }, (error, document) => {
       artist = document;
@@ -27,8 +27,8 @@ describe('/albums', () => {
         .post(`/artists/${artist._id}/albums`, () => {
         })
         .send({
-          name: 'InnerSpeaker',
-          year: 2010,
+          name: 'Psychocandy',
+          year: 1985,
         })
         .end((error, res) => {
           expect(error).to.equal(null);
@@ -36,8 +36,8 @@ describe('/albums', () => {
 
           Album.findById(res.body._id, (err, album) => {
             expect(err).to.equal(null);
-            expect(album.name).to.equal('InnerSpeaker');
-            expect(album.year).to.equal(2010);
+            expect(album.name).to.equal('Psychocandy');
+            expect(album.year).to.equal(1985);
             expect(album.artist).to.eql(artist._id);
             done();
           });
@@ -48,8 +48,8 @@ describe('/albums', () => {
       chai.request(server)
         .post('/artists/1234/albums')
         .send({
-          name: 'InnerSpeaker',
-          year: 2010,
+          name: 'Psychocandy',
+          year: 1985,
         })
         .end((error, res) => {
           expect(error).to.equal(null);
@@ -62,6 +62,40 @@ describe('/albums', () => {
             done();
           });
         });
+    });
+  });
+
+  describe('with albums in the database', () => {
+    let albums;
+    beforeEach((done) => {
+      Promise.all([
+        Album.create({ name: 'Psychocandy', year: 1985, artist: { _id: artist._id } }),
+        Album.create({ name: 'Darklands', year: 1987, artist: { _id: artist._id } }),
+        Album.create({ name: 'Automatic', year: 1989, artist: { _id: artist._id } }),
+      ]).then((documents) => {
+        albums = documents;
+        done();
+      });
+    });
+
+    describe('GET /artists/:artistId/albums', () => {
+      it('gets all album records for the artist', (done) => {
+        chai.request(server)
+          .get(`/artists/${artist._id}/albums`)
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(200);
+            expect(res.body).to.have.lengthOf(3);
+
+            res.body.forEach((album) => {
+              const expected = albums.find(a => a._id.toString() === album._id);
+              expect(album.name).to.equal(expected.name);
+              expect(album.year).to.equal(expected.year);
+              expect(album.artist).to.equal(artist._id.toString());
+            });
+            done();
+          });
+      });
     });
   });
 });
