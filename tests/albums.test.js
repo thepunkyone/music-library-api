@@ -134,5 +134,51 @@ describe('/albums', () => {
           });
       });
     });
+
+    describe('PATCH /artists/:artistId/albums/:albumId', () => {
+      it('updates album name by id', (done) => {  
+        const album = albums[0];
+        chai.request(server)
+          .patch(`/artists/${artist._id}/albums/${album._id}`)
+          .send({ name: 'Honey\'s Dead' })
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(200);
+            Album.findById(album._id, (err, updatedAlbum) => {
+              expect(updatedAlbum.name).to.equal('Honey\'s Dead');
+              expect(updatedAlbum.year).to.equal(album.year);
+            });
+            done();
+          });
+      });
+
+      it('updates album year by id', (done) => {
+        const album = albums[0];
+        chai.request(server)
+          .patch(`/artists/${artist._id}/albums/${album._id}`)
+          .send({ year: 1988 })
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(200);
+            Album.findById(album._id, (err, updatedAlbum) => {
+              expect(updatedAlbum.year).to.equal(1988);
+              expect(updatedAlbum.name).to.equal(album.name);
+            });
+            done();
+          });
+      });
+
+      it('returns a 404 if album doesn\'t exist', (done) => {
+        chai.request(server)
+          .patch(`/artists/${artist._id}/albums/1234`)
+          .send({ year: 2007 })
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(404);
+            expect(res.body.error).to.equal('The album could not be found.');
+            done();
+          });
+      });
+    });
   });
 });
