@@ -60,3 +60,13 @@ exports.update = (req, res) => {
     }
   });
 };
+
+exports.remove = (req, res) => {
+  Album.findByIdAndDelete(req.params.albumId, (err, album) => {
+    if (album) {
+      res.sendStatus(204);
+    } else {
+      res.status(404).send({ error: 'The album could not be found.' });
+    }
+  });
+};
