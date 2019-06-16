@@ -180,5 +180,33 @@ describe('/albums', () => {
           });
       });
     });
+
+    describe('DELETE /artists/:artistId/album/:albumId', () => {
+      it('deletes album record by id', (done) => {
+        const album = albums[0];
+        chai.request(server)
+          .delete(`/artists/${artist._id}/albums/${album._id}`)
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(204);
+            Album.findById(album._id, (error, updatedAlbum) => {
+              expect(error).to.equal(null);
+              expect(updatedAlbum).to.equal(null);
+            });
+            done();
+          });
+      });
+
+      it('returns a 404 if the album doesn\'t exist', (done) => {
+        chai.request(server)
+          .delete(`/artists/${artist._id}/albums/1234`)
+          .end((err, res) => {
+            expect(err).to.equal(null);
+            expect(res.status).to.equal(404);
+            expect(res.body.error).to.equal('The album could not be found.');
+            done();
+          });
+      });
+    });
   });
 });
